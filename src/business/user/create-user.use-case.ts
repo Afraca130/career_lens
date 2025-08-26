@@ -1,7 +1,7 @@
-import { Injectable, ConflictException, Inject } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
-import { User } from '../../domain/user/user.entity';
-import { IUserRepository } from '../../domain/user/user.repository.interface';
+import { Injectable, ConflictException, Inject } from "@nestjs/common";
+import * as bcrypt from "bcryptjs";
+import { User } from "../../domain/user/entity/user.entity";
+import { IUserRepository } from "../../domain/user/user.repository.interface";
 
 export interface CreateUserCommand {
   email: string;
@@ -13,7 +13,7 @@ export interface CreateUserCommand {
 export class CreateUserUseCase {
   constructor(
     @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    private readonly userRepository: IUserRepository
   ) {}
 
   async execute(command: CreateUserCommand): Promise<User> {
@@ -21,7 +21,7 @@ export class CreateUserUseCase {
 
     const userExists = await this.userRepository.existsByEmail(email);
     if (userExists) {
-      throw new ConflictException('이미 존재하는 이메일입니다.');
+      throw new ConflictException("이미 존재하는 이메일입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

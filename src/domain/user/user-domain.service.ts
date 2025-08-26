@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from '../../domain/user/user.entity';
-import { IUserRepository } from '../../domain/user/user.repository.interface';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { User } from "./entity/user.entity";
+import { IUserRepository } from "./user.repository.interface";
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>
   ) {}
 
   async create(user: User): Promise<User> {

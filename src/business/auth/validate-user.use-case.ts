@@ -1,13 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
-import * as bcrypt from 'bcryptjs';
-import { User } from '../../domain/user/user.entity';
-import { IUserRepository } from '../../domain/user/user.repository.interface';
+import { Injectable, Inject } from "@nestjs/common";
+import * as bcrypt from "bcryptjs";
+import { User } from "../../domain/user/entity/user.entity";
+import { IUserRepository } from "../../domain/user/user.repository.interface";
 
 @Injectable()
 export class ValidateUserUseCase {
   constructor(
     @Inject(IUserRepository)
-    private readonly userRepository: IUserRepository,
+    private readonly userRepository: IUserRepository
   ) {}
 
   async execute(email: string, password: string): Promise<User | null> {

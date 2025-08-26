@@ -1,4 +1,4 @@
-import { User } from './user.entity';
+import { User } from "./entity/user.entity";
 
 export interface IUserRepository {
   create(user: User): Promise<User>;
@@ -8,4 +8,4 @@ export interface IUserRepository {
   existsByEmail(email: string): Promise<boolean>;
 }
 
-export const IUserRepository = Symbol('IUserRepository');
+export const IUserRepository = Symbol("IUserRepository");

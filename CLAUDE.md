@@ -15,6 +15,12 @@ NestJS backend application with JWT authentication and user management following
 - `npm run test` - Run tests
 - `npm run test:watch` - Run tests in watch mode
 
+## API Documentation
+
+- Swagger UI: `http://localhost:3000/api`
+- Automatic API documentation with request/response schemas
+- JWT authentication support in Swagger UI
+
 ## Architecture
 
 ### DDD Layer Structure
@@ -42,22 +48,32 @@ NestJS backend application with JWT authentication and user management following
 - Presentation: `src/presentation/user/` - User controller and DTOs
 
 **Auth Context**
-- Domain: `src/domain/auth/` - Auth interfaces and types
-- Business: `src/business/auth/` - Auth use cases (validate user, generate token)
+- Domain: `src/domain/auth/` - Auth interfaces, types, and refresh token entity
+- Business: `src/business/auth/` - Auth use cases (validate user, generate token, refresh token)
 - Presentation: `src/presentation/auth/` - Auth controller, guards, strategies
 
 ### Database
 - MongoDB with Mongoose ODM
 - User entity with bcrypt password hashing
+- RefreshToken entity for token management
 - Database config in `src/config/database.config.ts`
+
+### Features
+- **Authentication**: Dual token system (access + refresh)
+- **API Documentation**: Swagger UI with JWT support
+- **Logging**: Request/response logging interceptor
+- **Validation**: Class-validator for request validation
+- **Security**: Password hashing, JWT token security
 
 ### Key Files
 - `src/domain/user/user.entity.ts` - User domain entity
-- `src/domain/user/user.repository.interface.ts` - User repository contract
+- `src/domain/auth/refresh-token.entity.ts` - Refresh token entity
 - `src/business/user/create-user.use-case.ts` - User creation business logic
-- `src/business/auth/validate-user.use-case.ts` - User validation logic
+- `src/business/auth/generate-token.use-case.ts` - Token generation logic
+- `src/business/auth/refresh-token.use-case.ts` - Token refresh logic
 - `src/presentation/auth/strategies/` - Passport authentication strategies
-- `src/modules/` - NestJS module configurations
+- `src/common/interceptors/logging.interceptor.ts` - Request logging
+- Domain modules: `src/domain/*/` - NestJS module configurations
 
 ## Environment Setup
 
@@ -69,3 +85,17 @@ Copy `.env.example` to `.env` and configure:
 ### MongoDB Setup
 - Default connection: `mongodb://localhost:27017/mountain`
 - For MongoDB Atlas: `mongodb+srv://username:password@cluster.mongodb.net/mountain`
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/login` - User login (returns access + refresh tokens)
+- `POST /auth/refresh` - Refresh access token using refresh token
+
+### Users
+- `POST /users/register` - User registration
+- `GET /users/profile` - Get user profile (requires authentication)
+
+## Token Management
+- **Access Token**: 24시간 유효, API 요청 시 Bearer 토큰으로 사용
+- **Refresh Token**: 30일 유효, 액세스 토큰 갱신용
