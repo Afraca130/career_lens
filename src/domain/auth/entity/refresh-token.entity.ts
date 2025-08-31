@@ -1,8 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
 
 @Schema({
-  collection: 'refresh_tokens',
+  collection: "refresh_tokens",
   timestamps: true,
 })
 export class RefreshToken extends Document {
@@ -11,7 +11,7 @@ export class RefreshToken extends Document {
   @Prop({ required: true })
   token: string;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+  @Prop({ required: true, type: Types.ObjectId, ref: "User" })
   userId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -29,10 +29,6 @@ export class RefreshToken extends Document {
     this.userId = userId;
     this.expiresAt = expiresAt;
     this.isRevoked = false;
-  }
-
-  get id(): string {
-    return this._id.toHexString();
   }
 
   isExpired(): boolean {

@@ -17,17 +17,19 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
   }
 
   async findByToken(token: string): Promise<RefreshToken | null> {
-    return this.refreshTokenModel.findOne({ token, isRevoked: false }).exec();
+    return this.refreshTokenModel.findOne({ token }).exec();
   }
 
   async findByUserId(userId: string): Promise<RefreshToken[]> {
     return this.refreshTokenModel
-      .find({ userId: new Types.ObjectId(userId), isRevoked: false })
+      .find({ userId: new Types.ObjectId(userId) })
       .exec();
   }
 
   async save(refreshToken: RefreshToken): Promise<RefreshToken> {
-    return refreshToken.save();
+    return this.refreshTokenModel
+      .findByIdAndUpdate(refreshToken._id, refreshToken, { new: true })
+      .exec();
   }
 
   async deleteByUserId(userId: string): Promise<void> {

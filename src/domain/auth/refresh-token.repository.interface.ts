@@ -1,5 +1,5 @@
-import { RefreshToken } from './refresh-token.entity';
-import { Types } from 'mongoose';
+import { RefreshToken } from "./entity/refresh-token.entity";
+import { Types } from "mongoose";
 
 export interface IRefreshTokenRepository {
   create(refreshToken: RefreshToken): Promise<RefreshToken>;
@@ -10,4 +10,4 @@ export interface IRefreshTokenRepository {
   deleteExpiredTokens(): Promise<void>;
 }
 
-export const IRefreshTokenRepository = Symbol('IRefreshTokenRepository');
+export const IRefreshTokenRepository = Symbol("IRefreshTokenRepository");

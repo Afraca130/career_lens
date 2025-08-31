@@ -1,19 +1,19 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { Types } from 'mongoose';
-import * as crypto from 'crypto';
+import { Types } from "mongoose";
+import * as crypto from "crypto";
 import { User } from "../../domain/user/entity/user.entity";
 import { AuthResult } from "../../domain/auth/auth-result.interface";
 import { JwtPayload } from "../../domain/auth/jwt-payload.interface";
-import { RefreshToken } from '../../domain/auth/refresh-token.entity';
-import { IRefreshTokenRepository } from '../../domain/auth/refresh-token.repository.interface';
+import { RefreshToken } from "../../domain/auth/entity/refresh-token.entity";
+import { IRefreshTokenRepository } from "../../domain/auth/refresh-token.repository.interface";
 
 @Injectable()
 export class GenerateTokenUseCase {
   constructor(
     private readonly jwtService: JwtService,
     @Inject(IRefreshTokenRepository)
-    private readonly refreshTokenRepository: IRefreshTokenRepository,
+    private readonly refreshTokenRepository: IRefreshTokenRepository
   ) {}
 
   async execute(user: User): Promise<AuthResult> {
@@ -23,17 +23,17 @@ export class GenerateTokenUseCase {
     };
 
     // Generate access token (24 hours)
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '24h' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: "24h" });
 
     // Generate refresh token (30 days)
-    const refreshTokenString = crypto.randomBytes(32).toString('hex');
+    const refreshTokenString = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 30); // 30 days
 
     const refreshToken = new RefreshToken(
       refreshTokenString,
       new Types.ObjectId(user.id),
-      expiresAt,
+      expiresAt
     );
 
     // Clean up old refresh tokens for this user

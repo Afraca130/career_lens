@@ -8,7 +8,10 @@ import { GenerateTokenUseCase } from "../../business/auth/generate-token.use-cas
 import { ValidateUserUseCase } from "../../business/auth/validate-user.use-case";
 import { RefreshTokenUseCase } from "../../business/auth/refresh-token.use-case";
 import { RefreshTokenRepository } from "../../business/auth/refresh-token.repository";
-import { RefreshToken, RefreshTokenSchema } from "./refresh-token.entity";
+import {
+  RefreshToken,
+  RefreshTokenSchema,
+} from "./entity/refresh-token.entity";
 import { IRefreshTokenRepository } from "./refresh-token.repository.interface";
 import { AuthController } from "../../presentation/auth/auth.controller";
 import { JwtStrategy } from "../../presentation/auth/strategies/jwt.strategy";
