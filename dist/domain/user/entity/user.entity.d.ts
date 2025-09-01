@@ -1,7 +1,5 @@
-import { Document, Types } from "mongoose";
-export type UserDocument = User & Document;
 export declare class User {
-    _id?: Types.ObjectId;
+    id: string;
     name: string;
     email: string;
     password: string;
@@ -9,15 +7,6 @@ export declare class User {
     signType: string;
     isVerified: boolean;
     isDeleted: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
-export declare const UserSchema: import("mongoose").Schema<User, import("mongoose").Model<User, any, any, any, Document<unknown, any, User, any, {}> & User & Required<{
-    _id: Types.ObjectId;
-}> & {
-    __v: number;
-}, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, User, Document<unknown, {}, import("mongoose").FlatRecord<User>, {}, import("mongoose").ResolveSchemaOptions<import("mongoose").DefaultSchemaOptions>> & import("mongoose").FlatRecord<User> & Required<{
-    _id: Types.ObjectId;
-}> & {
-    __v: number;
-}>;

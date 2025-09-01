@@ -31,33 +31,47 @@ docker-compose -f docker-compose.dev.yml down
 ## 📋 서비스 구성
 
 ### 기본 서비스
+
 - **app**: NestJS 애플리케이션 (포트: 3000)
-- **mongodb**: MongoDB 데이터베이스 (포트: 27017)
+- **postgres**: PostgreSQL 데이터베이스 (포트: 5432)
 
 ### 개발 전용 서비스
-- **mongo-express**: MongoDB 웹 관리도구 (포트: 8081)
-  - 접속: http://localhost:8081
-  - 계정: admin / admin
+
+- **pgadmin**: PostgreSQL 웹 관리도구 (포트: 8080)
+  - 접속: http://localhost:8080
+  - 계정: admin@career-lens.com / admin123
 
 ## 🔧 환경변수
 
 ### 프로덕션
-- `MONGODB_URI`: MongoDB 연결 문자열
+
+- `DB_HOST`: PostgreSQL 호스트
+- `DB_PORT`: PostgreSQL 포트
+- `DB_USERNAME`: PostgreSQL 사용자명
+- `DB_PASSWORD`: PostgreSQL 비밀번호
+- `DB_DATABASE`: PostgreSQL 데이터베이스명
 - `JWT_SECRET`: JWT 시크릿 키
 - `NODE_ENV`: production
 
 ### 개발
-- `MONGODB_URI`: 개발용 MongoDB 연결 문자열
+
+- `DB_HOST`: 개발용 PostgreSQL 호스트
+- `DB_PORT`: 개발용 PostgreSQL 포트
+- `DB_USERNAME`: 개발용 PostgreSQL 사용자명
+- `DB_PASSWORD`: 개발용 PostgreSQL 비밀번호
+- `DB_DATABASE`: 개발용 PostgreSQL 데이터베이스명
 - `JWT_SECRET`: 개발용 JWT 시크릿 키
 - `NODE_ENV`: development
 
 ## 📊 볼륨 및 데이터
 
 ### 데이터 볼륨
-- `mongodb_data`: 프로덕션 MongoDB 데이터
-- `mongodb_dev_data`: 개발 MongoDB 데이터
+
+- `postgres_data`: 프로덕션 PostgreSQL 데이터
+- `postgres_dev_data`: 개발 PostgreSQL 데이터
 
 ### 마운트 볼륨
+
 - `./logs`: 애플리케이션 로그 디렉토리
 
 ## 🚀 유용한 명령어
@@ -87,13 +101,15 @@ docker system prune -a  # 사용하지 않는 이미지 삭제
 ## 🔒 보안 고려사항
 
 1. **프로덕션 환경에서는 반드시 다음을 변경하세요:**
-   - MongoDB 루트 패스워드
+
+   - PostgreSQL 루트 패스워드
    - JWT 시크릿 키
-   - MongoDB Express 접근 계정
+   - pgAdmin 접근 계정
 
 2. **포트 노출 최소화:**
-   - 프로덕션에서는 MongoDB 포트(27017) 외부 노출 제거
-   - mongo-express는 개발 환경에서만 사용
+
+   - 프로덕션에서는 PostgreSQL 포트(5432) 외부 노출 제거
+   - pgAdmin은 개발 환경에서만 사용
 
 3. **환경변수 관리:**
    - 민감한 정보는 Docker Secrets 또는 외부 시크릿 관리 도구 사용
@@ -102,19 +118,21 @@ docker system prune -a  # 사용하지 않는 이미지 삭제
 ## 🔍 모니터링
 
 ### 헬스체크
+
 ```bash
 # 애플리케이션 상태 확인
 curl http://localhost:3000/api
 
-# MongoDB 상태 확인
-docker-compose exec mongodb mongosh --eval "db.adminCommand('ping')"
+# PostgreSQL 상태 확인
+docker-compose exec postgres psql -U postgres -d career_lens -c "SELECT 1;"
 ```
 
 ### 리소스 모니터링
+
 ```bash
 # 컨테이너 리소스 사용량
 docker stats
 
 # 특정 컨테이너 상세 정보
-docker inspect mountain-app
+docker inspect career-lens-app
 ```

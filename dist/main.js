@@ -13,8 +13,7 @@ async function bootstrap() {
     }));
     app.enableCors();
     const config = new swagger_1.DocumentBuilder()
-        .setTitle("Mountain API")
-        .setDescription("3계층 아키텍처 기반 인증 및 사용자 관리 시스템")
+        .setTitle("Career Lens API")
         .setVersion("1.0")
         .addTag("인증")
         .addBearerAuth()

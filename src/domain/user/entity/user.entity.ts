@@ -1,35 +1,40 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Types } from "mongoose";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
-export type UserDocument = User & Document;
-
-@Schema({ timestamps: true })
+@Entity("users")
 export class User {
-  _id?: Types.ObjectId;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-  @Prop({ required: true })
+  @Column({ type: "varchar", length: 100 })
   name: string;
 
-  @Prop({ required: true, unique: true })
+  @Column({ type: "varchar", length: 255, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Column({ type: "varchar", length: 255 })
   password: string;
 
-  @Prop({ default: "user" })
+  @Column({ type: "varchar", length: 50, default: "user" })
   role: string;
 
-  @Prop({ default: "email" })
+  @Column({ type: "varchar", length: 50, default: "email" })
   signType: string;
 
-  @Prop({ default: false })
+  @Column({ type: "boolean", default: false })
   isVerified: boolean;
 
-  @Prop({ default: false })
+  @Column({ type: "boolean", default: false })
   isDeleted: boolean;
 
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+  @CreateDateColumn()
+  createdAt: Date;
 
-export const UserSchema = SchemaFactory.createForClass(User);
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

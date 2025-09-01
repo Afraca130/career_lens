@@ -1,9 +1,9 @@
-import { Model } from "mongoose";
+import { Repository } from "typeorm";
 import { IUserRepository } from "../../domain/user/user.repository.interface";
-import { User, UserDocument } from "../../domain/user/entity/user.entity";
+import { User } from "../../domain/user/entity/user.entity";
 export declare class UserRepository implements IUserRepository {
-    private userModel;
-    constructor(userModel: Model<UserDocument>);
+    private readonly userRepository;
+    constructor(userRepository: Repository<User>);
     create(user: Partial<User>): Promise<User>;
     findByEmail(email: string): Promise<User | null>;
     findById(id: string): Promise<User | null>;

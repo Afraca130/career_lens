@@ -1,43 +1,45 @@
 import { Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 import { IUserRepository } from "../../domain/user/user.repository.interface";
-import { User, UserDocument } from "../../domain/user/entity/user.entity";
+import { User } from "../../domain/user/entity/user.entity";
 
 @Injectable()
 export class UserRepository implements IUserRepository {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) {}
 
   async create(user: Partial<User>): Promise<User> {
-    const newUser = new this.userModel(user);
-    return newUser.save();
+    const newUser = this.userRepository.create(user);
+    return this.userRepository.save(newUser);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.userModel.findOne({ email, isDeleted: false }).exec();
+    return this.userRepository.findOne({
+      where: { email, isDeleted: false },
+    });
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.userModel.findById(id).exec();
+    return this.userRepository.findOne({
+      where: { id },
+    });
   }
 
   async update(id: string, updates: Partial<User>): Promise<User | null> {
-    return this.userModel.findByIdAndUpdate(id, updates, { new: true }).exec();
+    await this.userRepository.update(id, updates);
+    return this.findById(id);
   }
 
-  async updatePassword(
-    id: string,
-    hashedPassword: string
-  ): Promise<User | null> {
-    return this.userModel
-      .findByIdAndUpdate(id, { password: hashedPassword }, { new: true })
-      .exec();
+  async updatePassword(id: string, hashedPassword: string): Promise<User | null> {
+    await this.userRepository.update(id, { password: hashedPassword });
+    return this.findById(id);
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.userModel
-      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
-      .exec();
-    return !!result;
+    const result = await this.userRepository.update(id, { isDeleted: true });
+    return result.affected > 0;
   }
 }

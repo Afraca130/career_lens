@@ -9,12 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
-const mongoose_1 = require("@nestjs/mongoose");
+const typeorm_1 = require("@nestjs/typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const core_1 = require("@nestjs/core");
 const auth_module_1 = require("./presentation/auth/auth.module");
 const user_module_1 = require("./presentation/user/user.module");
 const logging_interceptor_1 = require("./infrastructure/interceptors/logging.interceptor");
+const user_entity_1 = require("./domain/user/entity/user.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,7 +25,17 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
-            mongoose_1.MongooseModule.forRoot(process.env.MONGODB_URI || "mongodb://localhost:27017/mountain"),
+            typeorm_1.TypeOrmModule.forRoot({
+                type: "postgres",
+                host: process.env.DB_HOST || "localhost",
+                port: parseInt(process.env.DB_PORT) || 5432,
+                username: process.env.DB_USERNAME || "postgres",
+                password: process.env.DB_PASSWORD || "password",
+                database: process.env.DB_DATABASE || "career_lens",
+                entities: [user_entity_1.User],
+                synchronize: process.env.NODE_ENV !== "production",
+                logging: process.env.NODE_ENV === "development",
+            }),
             jwt_1.JwtModule.register({
                 global: true,
                 secret: process.env.JWT_SECRET || "your-secret-key",

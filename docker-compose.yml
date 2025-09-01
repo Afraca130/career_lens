@@ -1,22 +1,22 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # MongoDB 서비스
-  mongodb:
-    image: mongo:7.0
-    container_name: mountain-mongodb
+  # PostgreSQL 서비스
+  postgres:
+    image: postgres:15-alpine
+    container_name: career-lens-postgres
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: mountain
+      POSTGRES_DB: career_lens
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongodb_data:/data/db
-      - ./docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - mountain-network
+      - career-lens-network
 
   # NestJS 애플리케이션 서비스
   app:
@@ -24,48 +24,50 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: mountain-app
+    container_name: career-lens-app
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 3000
-      MONGODB_URI: mongodb://admin:password123@mongodb:27017/mountain?authSource=admin
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password123
+      DB_DATABASE: career_lens
       JWT_SECRET: your-super-secret-jwt-key-for-production
     ports:
       - "3000:3000"
     depends_on:
-      - mongodb
+      - postgres
     networks:
-      - mountain-network
+      - career-lens-network
     volumes:
       - ./logs:/app/logs
 
-  # MongoDB Express (옵션 - 개발용)
-  mongo-express:
-    image: mongo-express:1.0.0
-    container_name: mountain-mongo-express
+  # pgAdmin (옵션 - 개발용)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: career-lens-pgadmin
     restart: unless-stopped
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: admin@career-lens.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
-      - "8081:8081"
+      - "8080:80"
     depends_on:
-      - mongodb
+      - postgres
     networks:
-      - mountain-network
+      - career-lens-network
     profiles:
       - dev
 
 # 볼륨 정의
 volumes:
-  mongodb_data:
+  postgres_data:
     driver: local
 
 # 네트워크 정의
 networks:
-  mountain-network:
+  career-lens-network:
     driver: bridge

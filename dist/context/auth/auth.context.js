@@ -41,14 +41,14 @@ let AuthContext = class AuthContext {
             throw new Error("Invalid password");
         }
         const token = this.authService.generateToken({
-            userId: user._id,
+            userId: user.id,
             email: user.email,
             type: "access",
         });
         return {
             access_token: token,
             user: {
-                id: user._id.toString(),
+                id: user.id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
@@ -57,7 +57,7 @@ let AuthContext = class AuthContext {
     }
     async verifyToken(token) {
         try {
-            const cleanToken = token.replace('Bearer ', '');
+            const cleanToken = token.replace("Bearer ", "");
             if (!cleanToken) {
                 throw new Error("Token is required");
             }

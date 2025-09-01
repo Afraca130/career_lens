@@ -53,7 +53,7 @@ export class AuthContext {
 
     // JWT 토큰 생성
     const token = this.authService.generateToken({
-      userId: user._id,
+      userId: user.id,
       email: user.email,
       type: "access",
     });
@@ -61,7 +61,7 @@ export class AuthContext {
     return {
       access_token: token,
       user: {
-        id: user._id.toString(),
+        id: user.id,
         email: user.email,
         name: user.name,
         role: user.role,

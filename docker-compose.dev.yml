@@ -1,69 +1,71 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # 개발용 MongoDB
-  mongodb:
-    image: mongo:7.0
-    container_name: mountain-mongodb-dev
+  # 개발용 PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: career-lens-postgres-dev
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: mountain_dev
+      POSTGRES_DB: career_lens_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongodb_dev_data:/data/db
-      - ./docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
-      - mountain-dev-network
+      - career-lens-dev-network
 
   # 개발용 NestJS 애플리케이션 (핫 리로드)
   app:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: mountain-app-dev
+    container_name: career-lens-app-dev
     restart: unless-stopped
     environment:
       NODE_ENV: development
       PORT: 3000
-      MONGODB_URI: mongodb://admin:password123@mongodb:27017/mountain_dev?authSource=admin
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password123
+      DB_DATABASE: career_lens_dev
       JWT_SECRET: your-dev-jwt-secret-key
     ports:
       - "3000:3000"
       - "9229:9229" # 디버깅 포트
     depends_on:
-      - mongodb
+      - postgres
     networks:
-      - mountain-dev-network
+      - career-lens-dev-network
     volumes:
       - .:/app
       - /app/node_modules
       - ./logs:/app/logs
 
-  # MongoDB Express (개발용)
-  mongo-express:
-    image: mongo-express:1.0.0
-    container_name: mountain-mongo-express-dev
+  # pgAdmin (개발용)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: career-lens-pgadmin-dev
     restart: unless-stopped
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
-      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: admin@career-lens.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
-      - "8081:8081"
+      - "8080:80"
     depends_on:
-      - mongodb
+      - postgres
     networks:
-      - mountain-dev-network
+      - career-lens-dev-network
 
 volumes:
-  mongodb_dev_data:
+  postgres_dev_data:
     driver: local
 
 networks:
-  mountain-dev-network:
+  career-lens-dev-network:
     driver: bridge

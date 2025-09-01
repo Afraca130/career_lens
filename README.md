@@ -1,4 +1,4 @@
-# Mountain - 3계층 아키텍처 기반 인증 시스템
+# career-lens - 3계층 아키텍처 기반 인증 시스템
 
 Clean Architecture 원칙을 적용한 3계층 아키텍처로 구성된 인증 및 사용자 관리 시스템입니다.
 
