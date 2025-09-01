@@ -8,28 +8,25 @@
 src/
 ├── domain/                    # 도메인 레이어 (핵심 비즈니스 로직)
 │   ├── auth/                 # 인증 도메인
-│   │   ├── auth.entity.ts   # 인증 엔티티
-│   │   ├── auth.repository.interface.ts
-│   │   └── auth.service.interface.ts
+│   │   ├── auth.domain.ts
+│   │   └── auth-domain-module.ts
 │   └── user/                 # 사용자 도메인
-│       ├── user.entity.ts    # 사용자 엔티티
-│       └── user.repository.interface.ts
+│       ├── entity    # 사용자 엔티티
+│       |   └── user.entity.ts    # 사용자 엔티티
+│       ├── user.domain.ts
+│       └── user-domain.module.ts
 ├── context/                  # 컨텍스트 레이어 (비즈니스 로직 조정)
 │   ├── auth/                 # 인증 컨텍스트
+│   |   ├── auth-context.module.ts
 │   │   └── auth.context.ts   # 인증 관련 비즈니스 로직 조정
 │   └── user/                 # 사용자 컨텍스트
+│       ├── user-context.module.ts
 │       └── user.context.ts   # 사용자 관련 비즈니스 로직 조정
 ├── business/                 # 비즈니스 레이어 (유스케이스)
 │   ├── auth/                 # 인증 유스케이스
-│   │   ├── signup.use-case.ts
-│   │   └── login.use-case.ts
+│   |   ├── auth-business.module.ts
+│   │   └── auth.business.ts
 │   └── user/                 # 사용자 유스케이스
-├── infrastructure/           # 인프라스트럭처 레이어
-│   ├── auth/                 # 인증 인프라
-│   │   ├── auth.repository.ts
-│   │   └── auth.service.ts
-│   └── user/                 # 사용자 인프라
-│       └── user.repository.ts
 └── presentation/             # 프레젠테이션 레이어
     ├── auth/                 # 인증 컨트롤러
     │   ├── auth.controller.ts
