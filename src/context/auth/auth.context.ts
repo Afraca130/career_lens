@@ -3,6 +3,11 @@ import { IUserRepository } from "../../domain/user/user.repository.interface";
 import { IAuthService } from "../../domain/auth/auth.service.interface";
 import { User } from "../../domain/user/entity/user.entity";
 import { SignupRequest, LoginRequest, LoginResponse } from "./interfaces";
+import { 
+  EmailAlreadyExistsException, 
+  InvalidCredentialsException,
+  InvalidTokenException 
+} from "../../domain/auth/exceptions/auth.exceptions";
 
 @Injectable()
 export class AuthContext {
@@ -15,7 +20,7 @@ export class AuthContext {
     // 이메일 중복 검증
     const existingUser = await this.userRepository.findByEmail(request.email);
     if (existingUser) {
-      throw new Error("Email already exists");
+      throw new EmailAlreadyExistsException(request.email);
     }
 
     // 비밀번호 암호화
@@ -39,7 +44,7 @@ export class AuthContext {
     // 이메일 존재 여부 확인
     const user = await this.userRepository.findByEmail(request.email);
     if (!user) {
-      throw new Error("User not found");
+      throw new InvalidCredentialsException();
     }
 
     // 비밀번호 검증
@@ -48,7 +53,7 @@ export class AuthContext {
       user.password
     );
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw new InvalidCredentialsException();
     }
 
     // JWT 토큰 생성
@@ -75,7 +80,7 @@ export class AuthContext {
       const cleanToken = token.replace("Bearer ", "");
 
       if (!cleanToken) {
-        throw new Error("Token is required");
+        throw new InvalidTokenException("Token is required");
       }
 
       // 토큰 검증
@@ -83,7 +88,10 @@ export class AuthContext {
 
       return payload;
     } catch (error) {
-      throw new Error("Invalid or expired token");
+      if (error instanceof InvalidTokenException) {
+        throw error;
+      }
+      throw new InvalidTokenException();
     }
   }
 }

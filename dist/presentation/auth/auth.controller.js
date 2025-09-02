@@ -23,44 +23,16 @@ let AuthController = class AuthController {
         this.authBusiness = authBusiness;
     }
     async signup(signupDto) {
-        try {
-            return await this.authBusiness.signup(signupDto);
-        }
-        catch (error) {
-            if (error.message === "Email already exists") {
-                throw new common_1.ConflictException("이미 존재하는 이메일입니다.");
-            }
-            throw error;
-        }
+        return await this.authBusiness.signup(signupDto);
     }
     async login(loginDto) {
-        try {
-            return await this.authBusiness.login(loginDto);
-        }
-        catch (error) {
-            if (error.message === "User not found") {
-                throw new common_1.NotFoundException("사용자를 찾을 수 없습니다.");
-            }
-            if (error.message === "Invalid password") {
-                throw new common_1.BadRequestException("잘못된 비밀번호입니다.");
-            }
-            throw error;
-        }
+        return await this.authBusiness.login(loginDto);
     }
     async verifyToken(authorization) {
-        try {
-            if (!authorization) {
-                throw new common_1.UnauthorizedException("Authorization header is required");
-            }
-            return await this.authBusiness.verifyToken(authorization);
+        if (!authorization) {
+            throw new Error("Authorization header is required");
         }
-        catch (error) {
-            if (error.message.includes("Invalid or expired token") ||
-                error.message.includes("Token is required")) {
-                throw new common_1.UnauthorizedException(error.message);
-            }
-            throw error;
-        }
+        return await this.authBusiness.verifyToken(authorization);
     }
 };
 exports.AuthController = AuthController;

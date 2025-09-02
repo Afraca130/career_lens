@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserContext = void 0;
 const common_1 = require("@nestjs/common");
+const user_exceptions_1 = require("../../domain/user/exceptions/user.exceptions");
 let UserContext = class UserContext {
     constructor(userRepository, authService, userService) {
         this.userRepository = userRepository;
@@ -20,13 +21,13 @@ let UserContext = class UserContext {
     async changePassword(request) {
         const user = await this.userRepository.findById(request.userId);
         if (!user) {
-            throw new Error("User not found");
+            throw new user_exceptions_1.UserNotFoundException(request.userId);
         }
         this.userService.validatePasswordChange(user, request.newPassword);
         const hashedPassword = await this.authService.hashPassword(request.newPassword);
         const updatedUser = await this.userRepository.updatePassword(request.userId, hashedPassword);
         if (!updatedUser) {
-            throw new Error("Failed to update password");
+            throw new user_exceptions_1.UserNotFoundException(request.userId);
         }
         return updatedUser;
     }

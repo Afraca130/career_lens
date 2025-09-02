@@ -3,8 +3,6 @@ import {
   Post,
   Body,
   Param,
-  BadRequestException,
-  NotFoundException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from "@nestjs/swagger";
 import { UserBusiness } from "../../business/user/user.business";
@@ -28,7 +26,7 @@ export class UserController {
     description: "비밀번호 변경 성공",
     schema: {
       example: {
-        _id: "507f1f77bcf86cd799439011",
+        id: "550e8400-e29b-41d4-a716-446655440000",
         name: "홍길동",
         email: "user@example.com",
         role: "user",
@@ -49,24 +47,9 @@ export class UserController {
     @Param("userId") userId: string,
     @Body() changePasswordDto: ChangePasswordDto
   ): Promise<User> {
-    try {
-      return await this.userBusiness.changePassword({
-        userId,
-        newPassword: changePasswordDto.newPassword,
-      });
-    } catch (error) {
-      if (
-        error.message.includes("가입한 사용자는 비밀번호를 변경할 수 없습니다")
-      ) {
-        throw new BadRequestException(error.message);
-      }
-      if (error.message === "User not found") {
-        throw new NotFoundException("사용자를 찾을 수 없습니다.");
-      }
-      if (error.message.includes("비밀번호는 최소 6자 이상")) {
-        throw new BadRequestException(error.message);
-      }
-      throw error;
-    }
+    return await this.userBusiness.changePassword({
+      userId,
+      newPassword: changePasswordDto.newPassword,
+    });
   }
 }

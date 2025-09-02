@@ -3,10 +3,6 @@ import {
   Post,
   Body,
   Headers,
-  BadRequestException,
-  ConflictException,
-  NotFoundException,
-  UnauthorizedException,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -49,14 +45,7 @@ export class AuthController {
   @ApiResponse({ status: 409, description: "이메일 중복" })
   @ApiResponse({ status: 400, description: "잘못된 요청 데이터" })
   async signup(@Body() signupDto: SignupDto): Promise<User> {
-    try {
-      return await this.authBusiness.signup(signupDto);
-    } catch (error) {
-      if (error.message === "Email already exists") {
-        throw new ConflictException("이미 존재하는 이메일입니다.");
-      }
-      throw error;
-    }
+    return await this.authBusiness.signup(signupDto);
   }
 
   @Post("login")
@@ -80,17 +69,7 @@ export class AuthController {
   @ApiResponse({ status: 404, description: "사용자를 찾을 수 없음" })
   @ApiResponse({ status: 400, description: "잘못된 비밀번호" })
   async login(@Body() loginDto: LoginDto) {
-    try {
-      return await this.authBusiness.login(loginDto);
-    } catch (error) {
-      if (error.message === "User not found") {
-        throw new NotFoundException("사용자를 찾을 수 없습니다.");
-      }
-      if (error.message === "Invalid password") {
-        throw new BadRequestException("잘못된 비밀번호입니다.");
-      }
-      throw error;
-    }
+    return await this.authBusiness.login(loginDto);
   }
 
   @Post("verify")
@@ -118,20 +97,10 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: "유효하지 않은 토큰" })
   async verifyToken(@Headers("authorization") authorization: string) {
-    try {
-      if (!authorization) {
-        throw new UnauthorizedException("Authorization header is required");
-      }
-
-      return await this.authBusiness.verifyToken(authorization);
-    } catch (error) {
-      if (
-        error.message.includes("Invalid or expired token") ||
-        error.message.includes("Token is required")
-      ) {
-        throw new UnauthorizedException(error.message);
-      }
-      throw error;
+    if (!authorization) {
+      throw new Error("Authorization header is required");
     }
+
+    return await this.authBusiness.verifyToken(authorization);
   }
 }

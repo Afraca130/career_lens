@@ -15,6 +15,7 @@ const core_1 = require("@nestjs/core");
 const auth_module_1 = require("./presentation/auth/auth.module");
 const user_module_1 = require("./presentation/user/user.module");
 const logging_interceptor_1 = require("./infrastructure/interceptors/logging.interceptor");
+const domain_exception_filter_1 = require("./infrastructure/filters/domain-exception.filter");
 const user_entity_1 = require("./domain/user/entity/user.entity");
 let AppModule = class AppModule {
 };
@@ -48,6 +49,10 @@ exports.AppModule = AppModule = __decorate([
             {
                 provide: core_1.APP_INTERCEPTOR,
                 useClass: logging_interceptor_1.LoggingInterceptor,
+            },
+            {
+                provide: core_1.APP_FILTER,
+                useClass: domain_exception_filter_1.DomainExceptionFilter,
             },
         ],
     })

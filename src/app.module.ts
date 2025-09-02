@@ -2,10 +2,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { JwtModule } from "@nestjs/jwt";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_INTERCEPTOR, APP_FILTER } from "@nestjs/core";
 import { AuthModule } from "./presentation/auth/auth.module";
 import { UserModule } from "./presentation/user/user.module";
 import { LoggingInterceptor } from "./infrastructure/interceptors/logging.interceptor";
+import { DomainExceptionFilter } from "./infrastructure/filters/domain-exception.filter";
 import { User } from "./domain/user/entity/user.entity";
 
 @Module({
@@ -36,6 +37,10 @@ import { User } from "./domain/user/entity/user.entity";
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionFilter,
     },
   ],
 })

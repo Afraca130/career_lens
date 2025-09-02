@@ -4,6 +4,7 @@ import { IAuthService } from "../../domain/auth/auth.service.interface";
 import { IUserService } from "../../domain/user/user.service.interface";
 import { User } from "../../domain/user/entity/user.entity";
 import { ChangePasswordRequest } from "./interfaces";
+import { UserNotFoundException } from "../../domain/user/exceptions/user.exceptions";
 
 @Injectable()
 export class UserContext {
@@ -17,7 +18,7 @@ export class UserContext {
     // 사용자 조회
     const user = await this.userRepository.findById(request.userId);
     if (!user) {
-      throw new Error("User not found");
+      throw new UserNotFoundException(request.userId);
     }
 
     // 비밀번호 변경 가능 여부 검증
@@ -34,7 +35,7 @@ export class UserContext {
       hashedPassword
     );
     if (!updatedUser) {
-      throw new Error("Failed to update password");
+      throw new UserNotFoundException(request.userId);
     }
 
     return updatedUser;
