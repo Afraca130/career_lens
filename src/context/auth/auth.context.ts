@@ -3,10 +3,10 @@ import { IUserRepository } from "../../domain/user/user.repository.interface";
 import { IAuthService } from "../../domain/auth/auth.service.interface";
 import { User } from "../../domain/user/entity/user.entity";
 import { SignupRequest, LoginRequest, LoginResponse } from "./interfaces";
-import { 
-  EmailAlreadyExistsException, 
+import {
+  EmailAlreadyExistsException,
   InvalidCredentialsException,
-  InvalidTokenException 
+  InvalidTokenException,
 } from "../../domain/auth/exceptions/auth.exceptions";
 
 @Injectable()
