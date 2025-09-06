@@ -1,48 +1,90 @@
 version: "3.8"
 
 services:
-  # 개발용 PostgreSQL
-  postgres:
+  # 개발용 PostgreSQL - User Service용
+  postgres-user:
     image: postgres:15-alpine
-    container_name: career-lens-postgres-dev
+    container_name: career-lens-postgres-user-dev
     restart: unless-stopped
     environment:
-      POSTGRES_DB: career_lens_dev
+      POSTGRES_DB: user_service_dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password123
     ports:
       - "5432:5432"
     volumes:
-      - postgres_dev_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_user_dev_data:/var/lib/postgresql/data
     networks:
       - career-lens-dev-network
 
-  # 개발용 NestJS 애플리케이션 (핫 리로드)
-  app:
+  # 개발용 PostgreSQL - Auth Service용
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: career-lens-postgres-auth-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: auth_service_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_auth_dev_data:/var/lib/postgresql/data
+    networks:
+      - career-lens-dev-network
+
+  # 개발용 User Service (핫 리로드)
+  user-service:
     build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: career-lens-app-dev
+      context: ./apps/user-service
+      dockerfile: ../../Dockerfile.dev
+    container_name: career-lens-user-service-dev
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      PORT: 3000
-      DB_HOST: postgres
+      PORT: 3001
+      DB_HOST: postgres-user
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: password123
-      DB_DATABASE: career_lens_dev
-      JWT_SECRET: your-dev-jwt-secret-key
+      DB_DATABASE: user_service_dev
     ports:
-      - "3000:3000"
-      - "9229:9229" # 디버깅 포트
+      - "3001:3001"
+      - "9230:9229" # 디버깅 포트
     depends_on:
-      - postgres
+      - postgres-user
     networks:
       - career-lens-dev-network
     volumes:
-      - .:/app
+      - ./apps/user-service:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+
+  # 개발용 Auth Service (핫 리로드)
+  auth-service:
+    build:
+      context: ./apps/auth-service
+      dockerfile: ../../Dockerfile.dev
+    container_name: career-lens-auth-service-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+      DB_HOST: postgres-auth
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password123
+      DB_DATABASE: auth_service_dev
+      JWT_SECRET: your-dev-jwt-secret-key
+    ports:
+      - "3002:3002"
+      - "9231:9229" # 디버깅 포트
+    depends_on:
+      - postgres-auth
+    networks:
+      - career-lens-dev-network
+    volumes:
+      - ./apps/auth-service:/app
       - /app/node_modules
       - ./logs:/app/logs
 
@@ -58,12 +100,15 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - postgres
+      - postgres-user
+      - postgres-auth
     networks:
       - career-lens-dev-network
 
 volumes:
-  postgres_dev_data:
+  postgres_user_dev_data:
+    driver: local
+  postgres_auth_dev_data:
     driver: local
 
 networks:

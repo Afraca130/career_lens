@@ -1,44 +1,84 @@
 version: "3.8"
 
 services:
-  # PostgreSQL 서비스
-  postgres:
+  # PostgreSQL 서비스 - User Service용
+  postgres-user:
     image: postgres:15-alpine
-    container_name: career-lens-postgres
+    container_name: career-lens-postgres-user
     restart: unless-stopped
     environment:
-      POSTGRES_DB: career_lens
+      POSTGRES_DB: user_service
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password123
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_user_data:/var/lib/postgresql/data
     networks:
       - career-lens-network
 
-  # NestJS 애플리케이션 서비스
-  app:
+  # PostgreSQL 서비스 - Auth Service용
+  postgres-auth:
+    image: postgres:15-alpine
+    container_name: career-lens-postgres-auth
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: auth_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_auth_data:/var/lib/postgresql/data
+    networks:
+      - career-lens-network
+
+  # User Service
+  user-service:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ./apps/user-service
+      dockerfile: ../../Dockerfile
       target: production
-    container_name: career-lens-app
+    container_name: career-lens-user-service
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      PORT: 3000
-      DB_HOST: postgres
+      PORT: 3001
+      DB_HOST: postgres-user
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: password123
-      DB_DATABASE: career_lens
+      DB_DATABASE: user_service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres-user
+    networks:
+      - career-lens-network
+    volumes:
+      - ./logs:/app/logs
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./apps/auth-service
+      dockerfile: ../../Dockerfile
+      target: production
+    container_name: career-lens-auth-service
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3002
+      DB_HOST: postgres-auth
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password123
+      DB_DATABASE: auth_service
       JWT_SECRET: your-super-secret-jwt-key-for-production
     ports:
-      - "3000:3000"
+      - "3002:3002"
     depends_on:
-      - postgres
+      - postgres-auth
     networks:
       - career-lens-network
     volumes:
@@ -56,7 +96,8 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - postgres
+      - postgres-user
+      - postgres-auth
     networks:
       - career-lens-network
     profiles:
@@ -64,7 +105,9 @@ services:
 
 # 볼륨 정의
 volumes:
-  postgres_data:
+  postgres_user_data:
+    driver: local
+  postgres_auth_data:
     driver: local
 
 # 네트워크 정의
