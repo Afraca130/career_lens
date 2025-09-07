@@ -1,4 +1,5 @@
-import { DomainException } from "../../common/exceptions/domain.exception";
+
+import { DomainException } from "../../common/exceptions";
 
 export class UserNotFoundException extends DomainException {
   readonly code = "USER_NOT_FOUND";

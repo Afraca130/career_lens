@@ -4,7 +4,7 @@ import { User } from "../../domain/user/entity/user.entity";
 import { 
   PasswordChangeNotAllowedException, 
   InvalidPasswordException 
-} from "../../domain/user/exceptions/user.exceptions";
+} from "../../domain/user/exceptions";
 
 @Injectable()
 export class UserService implements IUserService {
@@ -27,3 +27,4 @@ export class UserService implements IUserService {
     }
   }
 }
+

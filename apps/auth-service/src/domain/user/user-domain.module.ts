@@ -7,3 +7,4 @@ import { User } from "./entity/user.entity";
   exports: [TypeOrmModule],
 })
 export class UserDomainModule {}
+

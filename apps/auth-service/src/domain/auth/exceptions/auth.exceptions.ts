@@ -1,4 +1,4 @@
-import { DomainException } from "../../common/exceptions/domain.exception";
+import { DomainException } from "../../common/exceptions";
 
 export class EmailAlreadyExistsException extends DomainException {
   readonly code = "EMAIL_ALREADY_EXISTS";
