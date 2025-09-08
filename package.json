@@ -1,7 +1,7 @@
 {
   "name": "career-lens-microservices",
   "version": "1.0.0",
-  "description": "Career Lens Microservices Architecture",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "build": "npm run build:user && npm run build:auth",
@@ -26,17 +26,25 @@
     "test:user": "cd apps/user-service && npm run test",
     "test:auth": "cd apps/auth-service && npm run test"
   },
-  "keywords": ["microservices", "nestjs", "ddd", "career-lens"],
+  "keywords": [
+    "microservices",
+    "nestjs",
+    "ddd",
+    "career-lens"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/proto-loader": "^0.8.0",
+    "@nestjs/microservices": "^11.1.6",
+    "concurrently": "^8.2.2",
+    "ts-proto": "^2.7.7"
   },
   "devDependencies": {
-    "prettier": "^3.0.0",
-    "eslint": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0"
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
   }
 }

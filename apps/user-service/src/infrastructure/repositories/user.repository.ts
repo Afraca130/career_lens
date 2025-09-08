@@ -48,6 +48,18 @@ export class UserRepository implements IUserRepository {
     return this.findById(id);
   }
 
+  async updateRefreshToken(id: string, refreshToken: string): Promise<User | null> {
+    await this.userRepository.update(id, { refreshToken });
+    return this.findById(id);
+  }
+
+  async findByRefreshToken(refreshToken: string): Promise<User | null> {
+    const entity = await this.userRepository.findOne({
+      where: { refreshToken, isDeleted: false },
+    });
+    return entity ? UserMapper.toDomain(entity) : null;
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.userRepository.update(id, { isDeleted: true });
     return result.affected > 0;

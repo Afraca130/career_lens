@@ -41,4 +41,7 @@ export class UserEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: "varchar", length: 500, nullable: true })
+  refreshToken: string;
 }

@@ -16,6 +16,7 @@ import { JwtAuthGuard, AuthenticatedUser } from "../../shared/guards/jwt-auth.gu
 import { User as UserDecorator } from "../../shared/decorators/user.decorator";
 import { SignupRequest } from "../../application/use-cases/auth/signup.request";
 import { LoginRequest } from "../../application/use-cases/auth/login.request";
+import { RefreshTokenRequest } from "../../application/use-cases/auth/refresh-token.request";
 import { ChangePasswordRequest } from "../../application/use-cases/user/change-password.request";
 
 @ApiTags("인증")
@@ -111,6 +112,40 @@ export class AuthController {
     }
 
     return await this.authApplicationService.verifyToken(authorization);
+  }
+
+  @Post("refresh")
+  @ApiOperation({
+    summary: "토큰 갱신",
+    description: "Refresh Token을 사용하여 새로운 Access Token을 발급받습니다.",
+  })
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        refresh_token: {
+          type: "string",
+          description: "Refresh Token",
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        },
+      },
+      required: ["refresh_token"],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: "토큰 갱신 성공",
+    schema: {
+      example: {
+        access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        refresh_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: "유효하지 않은 Refresh Token" })
+  async refreshToken(@Body() body: { refresh_token: string }) {
+    const request = new RefreshTokenRequest(body.refresh_token);
+    return await this.authApplicationService.refreshToken(request);
   }
 
   @Get("me")

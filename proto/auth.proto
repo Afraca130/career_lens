@@ -18,6 +18,9 @@ service AuthService {
   
   // 비밀번호 변경
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+  
+  // Refresh Token으로 Access Token 재발급
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
 }
 
 // 회원가입 요청
@@ -48,7 +51,8 @@ message LoginRequest {
 // 로그인 응답
 message LoginResponse {
   string access_token = 1;
-  UserInfo user = 2;
+  string refresh_token = 2;
+  UserInfo user = 3;
 }
 
 // 사용자 정보
@@ -108,4 +112,15 @@ message ChangePasswordResponse {
   bool is_deleted = 7;
   string created_at = 8;
   string updated_at = 9;
+}
+
+// Refresh Token 요청
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+// Refresh Token 응답
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
 }

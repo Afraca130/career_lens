@@ -10,5 +10,7 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   update(id: string, user: User): Promise<User | null>;
   updatePassword(id: string, hashedPassword: string): Promise<User | null>;
+  updateRefreshToken(id: string, refreshToken: string): Promise<User | null>;
+  findByRefreshToken(refreshToken: string): Promise<User | null>;
   delete(id: string): Promise<boolean>;
 }

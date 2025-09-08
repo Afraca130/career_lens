@@ -19,7 +19,8 @@ export class UserMapper {
       entity.isVerified,
       entity.isDeleted,
       entity.createdAt,
-      entity.updatedAt
+      entity.updatedAt,
+      entity.refreshToken
     );
   }
 
@@ -38,6 +39,7 @@ export class UserMapper {
     entity.isDeleted = domain.isDeleted;
     entity.createdAt = domain.createdAt;
     entity.updatedAt = domain.updatedAt;
+    entity.refreshToken = domain.refreshToken;
     return entity;
   }
 

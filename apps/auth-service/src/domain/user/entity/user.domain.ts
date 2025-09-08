@@ -13,7 +13,8 @@ export class User {
     public readonly isVerified: boolean,
     public readonly isDeleted: boolean,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date
+    public readonly updatedAt: Date,
+    public readonly refreshToken?: string
   ) {}
 
   /**
@@ -51,7 +52,8 @@ export class User {
       this.isVerified,
       this.isDeleted,
       this.createdAt,
-      new Date() // updatedAt 업데이트
+      new Date(), // updatedAt 업데이트
+      this.refreshToken
     );
   }
 
@@ -69,7 +71,8 @@ export class User {
       this.isVerified,
       this.isDeleted,
       this.createdAt,
-      new Date() // updatedAt 업데이트
+      new Date(), // updatedAt 업데이트
+      this.refreshToken
     );
   }
 
@@ -87,7 +90,8 @@ export class User {
       this.isVerified,
       true, // isDeleted = true
       this.createdAt,
-      new Date() // updatedAt 업데이트
+      new Date(), // updatedAt 업데이트
+      this.refreshToken
     );
   }
 
@@ -111,7 +115,27 @@ export class User {
       false, // 기본적으로 미인증
       false, // 기본적으로 삭제되지 않음
       now,
-      now
+      now,
+      undefined // refreshToken은 로그인 시 생성
+    );
+  }
+
+  /**
+   * Refresh Token 업데이트
+   */
+  updateRefreshToken(refreshToken: string): User {
+    return new User(
+      this.id,
+      this.name,
+      this.email,
+      this.password,
+      this.role,
+      this.signType,
+      this.isVerified,
+      this.isDeleted,
+      this.createdAt,
+      new Date(), // updatedAt 업데이트
+      refreshToken
     );
   }
 }

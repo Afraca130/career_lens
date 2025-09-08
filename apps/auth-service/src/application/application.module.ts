@@ -3,6 +3,7 @@ import { AuthApplicationService } from "./services/auth.application.service";
 import { SignupUseCase } from "./use-cases/auth/signup.use-case";
 import { LoginUseCase } from "./use-cases/auth/login.use-case";
 import { VerifyTokenUseCase } from "./use-cases/auth/verify-token.use-case";
+import { RefreshTokenUseCase } from "./use-cases/auth/refresh-token.use-case";
 import { GetUserUseCase } from "./use-cases/user/get-user.use-case";
 import { ChangePasswordUseCase } from "./use-cases/user/change-password.use-case";
 import { InfrastructureModule } from "../infrastructure/infrastructure.module";
@@ -19,6 +20,7 @@ import { SharedModule } from "../shared/shared.module";
     SignupUseCase,
     LoginUseCase,
     VerifyTokenUseCase,
+    RefreshTokenUseCase,
     GetUserUseCase,
     ChangePasswordUseCase,
   ],

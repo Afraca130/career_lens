@@ -3,6 +3,7 @@ import { GrpcMethod } from "@nestjs/microservices";
 import { AuthApplicationService } from "../application/services/auth.application.service";
 import { SignupRequest } from "../application/use-cases/auth/signup.request";
 import { LoginRequest } from "../application/use-cases/auth/login.request";
+import { RefreshTokenRequest } from "../application/use-cases/auth/refresh-token.request";
 import { ChangePasswordRequest } from "../application/use-cases/user/change-password.request";
 
 /**
@@ -42,6 +43,7 @@ export class AuthGrpcController {
     
     return {
       access_token: result.access_token,
+      refresh_token: result.refresh_token,
       user: {
         id: result.user.id,
         email: result.user.email,
@@ -96,6 +98,17 @@ export class AuthGrpcController {
       is_deleted: result.isDeleted,
       created_at: result.createdAt.toISOString(),
       updated_at: result.updatedAt.toISOString(),
+    };
+  }
+
+  @GrpcMethod("AuthService", "RefreshToken")
+  async refreshToken(data: any) {
+    const request = new RefreshTokenRequest(data.refresh_token);
+    const result = await this.authApplicationService.refreshToken(request);
+    
+    return {
+      access_token: result.access_token,
+      refresh_token: result.refresh_token,
     };
   }
 }

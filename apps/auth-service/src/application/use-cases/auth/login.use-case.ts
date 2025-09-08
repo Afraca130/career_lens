@@ -32,15 +32,25 @@ export class LoginUseCase {
     }
 
     // 3. JWT 토큰 생성
-    const token = this.authService.generateToken({
+    const accessToken = this.authService.generateToken({
       userId: user.id,
       email: user.email,
       type: "access",
     });
 
-    // 4. 응답 생성
+    const refreshToken = this.authService.generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+      type: "refresh",
+    });
+
+    // 4. Refresh Token을 데이터베이스에 저장
+    await this.userRepository.updateRefreshToken(user.id, refreshToken);
+
+    // 5. 응답 생성
     return new LoginResponse(
-      token,
+      accessToken,
+      refreshToken,
       {
         id: user.id,
         email: user.email,
