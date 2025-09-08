@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package auth;
+
+// 인증 서비스 정의
+service AuthService {
+  // 회원가입
+  rpc Signup(SignupRequest) returns (SignupResponse);
+  
+  // 로그인
+  rpc Login(LoginRequest) returns (LoginResponse);
+  
+  // 토큰 검증
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+  
+  // 사용자 정보 조회
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  
+  // 비밀번호 변경
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
+}
+
+// 회원가입 요청
+message SignupRequest {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string sign_type = 4;
+}
+
+// 회원가입 응답
+message SignupResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string role = 4;
+  string sign_type = 5;
+  bool is_verified = 6;
+  string created_at = 7;
+}
+
+// 로그인 요청
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+// 로그인 응답
+message LoginResponse {
+  string access_token = 1;
+  UserInfo user = 2;
+}
+
+// 사용자 정보
+message UserInfo {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string role = 4;
+}
+
+// 토큰 검증 요청
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+// 토큰 검증 응답
+message VerifyTokenResponse {
+  string user_id = 1;
+  string email = 2;
+  string type = 3;
+  int64 iat = 4;
+  int64 exp = 5;
+}
+
+// 사용자 조회 요청
+message GetUserRequest {
+  string user_id = 1;
+}
+
+// 사용자 조회 응답
+message GetUserResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string role = 4;
+  string sign_type = 5;
+  bool is_verified = 6;
+  bool is_deleted = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}
+
+// 비밀번호 변경 요청
+message ChangePasswordRequest {
+  string user_id = 1;
+  string new_password = 2;
+}
+
+// 비밀번호 변경 응답
+message ChangePasswordResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string role = 4;
+  string sign_type = 5;
+  bool is_verified = 6;
+  bool is_deleted = 7;
+  string created_at = 8;
+  string updated_at = 9;
+}

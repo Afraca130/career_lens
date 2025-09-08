@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JwtModule } from "@nestjs/jwt";
 import { APP_INTERCEPTOR, APP_FILTER } from "@nestjs/core";
 import { AuthModule } from "./presentation/auth/auth.module";
-import { LoggingInterceptor } from "./infrastructure/interceptors/logging.interceptor";
-import { DomainExceptionFilter } from "./infrastructure/filters/domain-exception.filter";
-import { User } from "./domain/user/entity/user.entity";
+import { AuthGrpcModule } from "./grpc/auth.grpc.module";
+import { LoggingInterceptor } from "./shared/interceptors/logging.interceptor";
+import { DomainExceptionFilter } from "./shared/filters/domain-exception.filter";
+import { UserEntity } from "./infrastructure/persistence/typeorm/user.entity";
 
 @Module({
   imports: [
@@ -20,16 +20,12 @@ import { User } from "./domain/user/entity/user.entity";
       username: process.env.DB_USERNAME || "postgres",
       password: process.env.DB_PASSWORD || "password",
       database: process.env.DB_DATABASE || "auth_service",
-      entities: [User],
+      entities: [UserEntity],
       synchronize: process.env.NODE_ENV !== "production",
       logging: process.env.NODE_ENV === "development",
     }),
-    JwtModule.register({
-      global: true,
-      secret: process.env.JWT_SECRET || "your-secret-key",
-      signOptions: { expiresIn: "24h" },
-    }),
     AuthModule,
+    AuthGrpcModule,
   ],
   providers: [
     {
