@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
-  # PostgreSQL 서비스 - User Service용
-  postgres-user:
+  # PostgreSQL 서비스 - 통합 User Service용
+  postgres:
     image: postgres:15-alpine
-    container_name: career-lens-postgres-user
+    container_name: career-lens-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: user_service
@@ -13,72 +11,52 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_user_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - career-lens-network
 
-  # PostgreSQL 서비스 - Auth Service용
-  postgres-auth:
-    image: postgres:15-alpine
-    container_name: career-lens-postgres-auth
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: auth_service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password123
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_auth_data:/var/lib/postgresql/data
-    networks:
-      - career-lens-network
-
-  # User Service
+  # 통합 User Service (인증 + 사용자 관리)
   user-service:
     build:
-      context: ./apps/user-service
-      dockerfile: ../../Dockerfile
-      target: production
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
     container_name: career-lens-user-service
     restart: unless-stopped
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       PORT: 3001
-      DB_HOST: postgres-user
+      GRPC_URL: 0.0.0.0:50051
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: password123
       DB_DATABASE: user_service
+      JWT_SECRET: your-super-secret-jwt-key-for-development
     ports:
-      - "3001:3001"
+      - "3001:3001" # HTTP
+      - "50051:50051" # gRPC
     depends_on:
-      - postgres-user
+      - postgres
     networks:
       - career-lens-network
     volumes:
       - ./logs:/app/logs
 
-  # Auth Service
-  auth-service:
+  # API Gateway
+  api-gateway:
     build:
-      context: ./apps/auth-service
-      dockerfile: ../../Dockerfile
-      target: production
-    container_name: career-lens-auth-service
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+    container_name: career-lens-api-gateway
     restart: unless-stopped
     environment:
-      NODE_ENV: production
-      PORT: 3002
-      DB_HOST: postgres-auth
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: password123
-      DB_DATABASE: auth_service
-      JWT_SECRET: your-super-secret-jwt-key-for-production
+      NODE_ENV: development
+      PORT: 3000
+      USER_SERVICE_GRPC_URL: user-service:50051
     ports:
-      - "3002:3002"
+      - "3000:3000"
     depends_on:
-      - postgres-auth
+      - user-service
     networks:
       - career-lens-network
     volumes:
@@ -96,8 +74,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - postgres-user
-      - postgres-auth
+      - postgres
     networks:
       - career-lens-network
     profiles:
@@ -105,9 +82,7 @@ services:
 
 # 볼륨 정의
 volumes:
-  postgres_user_data:
-    driver: local
-  postgres_auth_data:
+  postgres_data:
     driver: local
 
 # 네트워크 정의
