@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
 import { IAuthService } from "../../../domain/auth/auth.service.interface";
-import { LoginRequest } from "./login.request";
-import { LoginResponse } from "./login.response";
+import { LoginRequest } from "./dto/login.request";
+import { LoginResponse } from "./dto/login.response";
 import { InvalidCredentialsException } from "../../../domain/auth/exceptions";
 
 /**
@@ -11,7 +11,9 @@ import { InvalidCredentialsException } from "../../../domain/auth/exceptions";
 @Injectable()
 export class LoginUseCase {
   constructor(
+    @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
+    @Inject("IAuthService")
     private readonly authService: IAuthService
   ) {}
 
@@ -32,21 +34,28 @@ export class LoginUseCase {
     }
 
     // 3. JWT 토큰 생성
-    const token = this.authService.generateToken({
+    const accessToken = this.authService.generateToken({
       userId: user.id,
       email: user.email,
       type: "access",
     });
 
-    // 4. 응답 생성
-    return new LoginResponse(
-      token,
-      {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      }
-    );
+    // 4. Refresh Token 생성
+    const refreshToken = this.authService.generateRefreshToken({
+      userId: user.id,
+      email: user.email,
+      type: "refresh",
+    });
+
+    // 5. Refresh Token을 데이터베이스에 저장
+    await this.userRepository.updateRefreshToken(user.id, refreshToken);
+
+    // 6. 응답 생성
+    return new LoginResponse(accessToken, refreshToken, {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
   }
 }

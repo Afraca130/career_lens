@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
 import { User } from "../../../domain/user/entity/user.domain";
 import { UserNotFoundException } from "../../../domain/user/exceptions";
@@ -8,7 +8,11 @@ import { UserNotFoundException } from "../../../domain/user/exceptions";
  */
 @Injectable()
 export class GetUserUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(
+    @Inject("IUserRepository")
+    @Inject("IUserRepository")
+    private readonly userRepository: IUserRepository
+  ) {}
 
   async execute(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);

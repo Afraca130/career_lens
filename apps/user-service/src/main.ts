@@ -4,9 +4,11 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
 import { join } from "path";
 import { AppModule } from "./app.module";
+import { ConfigService } from "@nestjs/config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -38,9 +40,12 @@ async function bootstrap() {
   const grpcOptions: MicroserviceOptions = {
     transport: Transport.GRPC,
     options: {
-      package: "user",
-      protoPath: join(__dirname, "../../../proto/user.proto"),
-      url: process.env.GRPC_URL || "0.0.0.0:50052",
+      package: ["auth", "user"],
+      protoPath: [
+        join(__dirname, "../../../proto/auth.proto"),
+        join(__dirname, "../../../proto/user.proto"),
+      ],
+      url: configService.get("GRPC_URL") || "0.0.0.0:50051",
     },
   };
 
@@ -49,11 +54,13 @@ async function bootstrap() {
 
   // 애플리케이션 시작
   await app.startAllMicroservices();
-  
-  const port = process.env.PORT || 3002;
+
+  const port = process.env.PORT || 3001;
   await app.listen(port);
-  
+
   console.log(`User Service HTTP is running on: http://localhost:${port}`);
-  console.log(`User Service gRPC is running on: ${process.env.GRPC_URL || "0.0.0.0:50052"}`);
+  console.log(
+    `User Service gRPC is running on: ${process.env.GRPC_URL || "0.0.0.0:50051"}`
+  );
 }
 bootstrap();

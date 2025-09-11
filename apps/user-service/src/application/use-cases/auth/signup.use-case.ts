@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
 import { IAuthService } from "../../../domain/auth/auth.service.interface";
 import { User } from "../../../domain/user/entity/user.domain";
-import { SignupRequest } from "./signup.request";
-import { SignupResponse } from "./signup.response";
+import { SignupRequest } from "./dto/signup.request";
+import { SignupResponse } from "./dto/signup.response";
 import { EmailAlreadyExistsException } from "../../../domain/auth/exceptions";
 
 /**
@@ -13,7 +13,9 @@ import { EmailAlreadyExistsException } from "../../../domain/auth/exceptions";
 @Injectable()
 export class SignupUseCase {
   constructor(
+    @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
+    @Inject("IAuthService")
     private readonly authService: IAuthService
   ) {}
 
@@ -25,7 +27,9 @@ export class SignupUseCase {
     }
 
     // 2. 비밀번호 암호화
-    const hashedPassword = await this.authService.hashPassword(request.password);
+    const hashedPassword = await this.authService.hashPassword(
+      request.password
+    );
 
     // 3. 사용자 도메인 객체 생성
     const user = User.create(

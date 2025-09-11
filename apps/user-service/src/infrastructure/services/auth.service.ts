@@ -26,6 +26,13 @@ export class AuthService implements IAuthService {
     });
   }
 
+  generateRefreshToken(payload: any): string {
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET || "your-secret-key",
+      expiresIn: "7d",
+    });
+  }
+
   verifyToken(token: string): any {
     try {
       return this.jwtService.verify(token, {

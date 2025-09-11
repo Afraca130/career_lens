@@ -29,7 +29,10 @@ export class UserMapper {
    */
   static toEntity(domain: User): UserEntity {
     const entity = new UserEntity();
-    entity.id = domain.id;
+    // ID는 TypeORM이 자동으로 생성하므로 빈 문자열이 아닌 경우에만 설정
+    if (domain.id && domain.id !== "") {
+      entity.id = domain.id;
+    }
     entity.name = domain.name;
     entity.email = domain.email;
     entity.password = domain.password;
@@ -47,13 +50,13 @@ export class UserMapper {
    * 도메인 객체 배열을 TypeORM 엔티티 배열로 변환
    */
   static toEntityArray(domains: User[]): UserEntity[] {
-    return domains.map(domain => this.toEntity(domain));
+    return domains.map((domain) => this.toEntity(domain));
   }
 
   /**
    * TypeORM 엔티티 배열을 도메인 객체 배열로 변환
    */
   static toDomainArray(entities: UserEntity[]): User[] {
-    return entities.map(entity => this.toDomain(entity));
+    return entities.map((entity) => this.toDomain(entity));
   }
 }

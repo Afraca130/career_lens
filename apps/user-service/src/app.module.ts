@@ -2,10 +2,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_INTERCEPTOR, APP_FILTER } from "@nestjs/core";
-import { UserGrpcModule } from "./grpc/user.grpc.module";
-import { LoggingInterceptor } from "./shared/interceptors/logging.interceptor";
-import { DomainExceptionFilter } from "./shared/filters/domain-exception.filter";
+import { ApplicationModule } from "./application/application.module";
+import { InfrastructureModule } from "./infrastructure/infrastructure.module";
+import { UserDomainExceptionFilter } from "./infrastructure/framework/filters/user-domain-exception.filter";
 import { UserEntity } from "./infrastructure/persistence/typeorm/user.entity";
+import { LoggingInterceptor } from "@app/common";
 
 @Module({
   imports: [
@@ -18,12 +19,13 @@ import { UserEntity } from "./infrastructure/persistence/typeorm/user.entity";
       port: parseInt(process.env.DB_PORT) || 5432,
       username: process.env.DB_USERNAME || "postgres",
       password: process.env.DB_PASSWORD || "password",
-      database: process.env.DB_DATABASE || "auth_service",
+      database: process.env.DB_DATABASE || "user_service",
       entities: [UserEntity],
       synchronize: process.env.NODE_ENV !== "production",
       logging: process.env.NODE_ENV === "development",
     }),
-    UserGrpcModule,
+    ApplicationModule,
+    InfrastructureModule,
   ],
   providers: [
     {
@@ -32,7 +34,7 @@ import { UserEntity } from "./infrastructure/persistence/typeorm/user.entity";
     },
     {
       provide: APP_FILTER,
-      useClass: DomainExceptionFilter,
+      useClass: UserDomainExceptionFilter,
     },
   ],
 })
