@@ -88,6 +88,25 @@ export interface UserInfo {
   updatedAt: string;
 }
 
+/** 비밀번호 변경 요청 */
+export interface ChangePasswordRequest {
+  userId: string;
+  newPassword: string;
+}
+
+/** 비밀번호 변경 응답 */
+export interface ChangePasswordResponse {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  signType: string;
+  isVerified: boolean;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const USER_PACKAGE_NAME = "user";
 
 /** 사용자 서비스 정의 */
@@ -108,6 +127,10 @@ export interface UserServiceClient {
   /** 사용자 목록 조회 */
 
   getUsers(request: GetUsersRequest, metadata?: Metadata): Observable<GetUsersResponse>;
+
+  /** 비밀번호 변경 */
+
+  changePassword(request: ChangePasswordRequest, metadata?: Metadata): Observable<ChangePasswordResponse>;
 }
 
 /** 사용자 서비스 정의 */
@@ -140,11 +163,18 @@ export interface UserServiceController {
     request: GetUsersRequest,
     metadata?: Metadata,
   ): Promise<GetUsersResponse> | Observable<GetUsersResponse> | GetUsersResponse;
+
+  /** 비밀번호 변경 */
+
+  changePassword(
+    request: ChangePasswordRequest,
+    metadata?: Metadata,
+  ): Promise<ChangePasswordResponse> | Observable<ChangePasswordResponse> | ChangePasswordResponse;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getUser", "updateProfile", "deleteUser", "getUsers"];
+    const grpcMethods: string[] = ["getUser", "updateProfile", "deleteUser", "getUsers", "changePassword"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

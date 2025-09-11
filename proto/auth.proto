@@ -13,12 +13,6 @@ service AuthService {
   // 토큰 검증
   rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
   
-  // 사용자 정보 조회
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  
-  // 비밀번호 변경
-  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
-  
   // Refresh Token으로 Access Token 재발급
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
 }
@@ -77,42 +71,7 @@ message VerifyTokenResponse {
   int64 exp = 5;
 }
 
-// 사용자 조회 요청
-message GetUserRequest {
-  string user_id = 1;
-}
 
-// 사용자 조회 응답
-message GetUserResponse {
-  string id = 1;
-  string name = 2;
-  string email = 3;
-  string role = 4;
-  string sign_type = 5;
-  bool is_verified = 6;
-  bool is_deleted = 7;
-  string created_at = 8;
-  string updated_at = 9;
-}
-
-// 비밀번호 변경 요청
-message ChangePasswordRequest {
-  string user_id = 1;
-  string new_password = 2;
-}
-
-// 비밀번호 변경 응답
-message ChangePasswordResponse {
-  string id = 1;
-  string name = 2;
-  string email = 3;
-  string role = 4;
-  string sign_type = 5;
-  bool is_verified = 6;
-  bool is_deleted = 7;
-  string created_at = 8;
-  string updated_at = 9;
-}
 
 // Refresh Token 요청
 message RefreshTokenRequest {
