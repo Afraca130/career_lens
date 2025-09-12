@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_INTERCEPTOR, APP_FILTER } from "@nestjs/core";
 import { ApplicationModule } from "./application/application.module";
-import { InfrastructureModule } from "./infrastructure/infrastructure.module";
+import { GrpcModule } from "./infrastructure/grpc/grpc.module";
 import { UserDomainExceptionFilter } from "./infrastructure/framework/filters/user-domain-exception.filter";
 import { UserEntity } from "./infrastructure/persistence/typeorm/user.entity";
 import { LoggingInterceptor } from "@app/common";
@@ -25,7 +25,7 @@ import { LoggingInterceptor } from "@app/common";
       logging: process.env.NODE_ENV === "development",
     }),
     ApplicationModule,
-    InfrastructureModule,
+    GrpcModule,
   ],
   providers: [
     {

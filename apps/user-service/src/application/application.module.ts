@@ -1,5 +1,6 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { DomainModule } from "../domain/domain.module";
+import { InfrastructureModule } from "../infrastructure/infrastructure.module";
 import { AuthApplicationService } from "./services/auth.application.service";
 import { UserApplicationService } from "./services/user.application.service";
 import { SignupUseCase } from "./use-cases/auth/signup.use-case";
@@ -17,7 +18,7 @@ import { DeleteUserUseCase } from "./use-cases/user/delete-user.use-case";
  * 유스케이스와 애플리케이션 서비스를 관리
  */
 @Module({
-  imports: [DomainModule],
+  imports: [DomainModule, InfrastructureModule],
   providers: [
     AuthApplicationService,
     UserApplicationService,

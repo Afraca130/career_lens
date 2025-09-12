@@ -53,6 +53,8 @@ services:
       NODE_ENV: development
       PORT: 3000
       USER_SERVICE_GRPC_URL: user-service:50051
+      AUTH_SERVICE_GRPC_URL: user-service:50051
+      JWT_SECRET: your-super-secret-jwt-key-for-development
     ports:
       - "3000:3000"
     depends_on:

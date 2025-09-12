@@ -17,9 +17,12 @@ import { AuthGrpcClient } from "./auth-grpc.client";
         name: "AUTH_SERVICE",
         transport: Transport.GRPC,
         options: {
-          package: ["auth"],
-          protoPath: [join(__dirname, "../../../proto/auth.proto")],
-          url: process.env.AUTH_SERVICE_GRPC_URL || "localhost:50051",
+          package: ["auth", "user"],
+          protoPath: [
+            join(__dirname, "../../../proto/auth.proto"),
+            join(__dirname, "../../../proto/user.proto"),
+          ],
+          url: process.env.AUTH_SERVICE_GRPC_URL || "user-service:50051",
         },
       },
     ]),

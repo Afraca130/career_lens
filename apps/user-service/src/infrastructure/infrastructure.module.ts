@@ -1,12 +1,8 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { JwtModule } from "@nestjs/jwt";
 import { UserEntity } from "./persistence/typeorm/user.entity";
 import { UserRepository } from "./repositories/user.repository";
-import { AuthController } from "./framework/controllers/auth.controller";
-import { GrpcModule } from "./grpc/grpc.module";
 import { IUserRepository } from "../domain/user/user.repository.interface";
-import { ApplicationModule } from "../application/application.module";
 
 /**
  * 인프라스트럭처 모듈
@@ -15,8 +11,6 @@ import { ApplicationModule } from "../application/application.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
-    ApplicationModule,
-    GrpcModule,
   ],
   providers: [
     UserRepository,
