@@ -7,7 +7,7 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/user-service/tsconfig.json"
+    "tsConfigPath": "apps/user-service/tsconfig.app.json"
   },
   "projects": {
     "user-service": {

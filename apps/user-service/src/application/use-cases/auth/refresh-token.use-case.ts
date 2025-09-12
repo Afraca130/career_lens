@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
-import { IAuthService } from "../../../domain/auth/auth.service.interface";
+import { AuthService } from "../../../domain/auth/auth.service";
 import { RefreshTokenRequest } from "./dto/refresh-token.request";
 import { RefreshTokenResponse } from "./dto/refresh-token.response";
 import { InvalidTokenException } from "../../../domain/auth/exceptions";
@@ -14,8 +14,7 @@ export class RefreshTokenUseCase {
   constructor(
     @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
-    @Inject("IAuthService")
-    private readonly authService: IAuthService
+    private readonly authService: AuthService
   ) {}
 
   async execute(request: RefreshTokenRequest): Promise<RefreshTokenResponse> {

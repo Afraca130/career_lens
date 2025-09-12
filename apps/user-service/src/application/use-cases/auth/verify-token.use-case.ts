@@ -1,5 +1,5 @@
-import { Injectable, Inject } from "@nestjs/common";
-import { IAuthService } from "../../../domain/auth/auth.service.interface";
+import { Injectable } from "@nestjs/common";
+import { AuthService } from "../../../domain/auth/auth.service";
 import { InvalidTokenException } from "../../../domain/auth/exceptions";
 
 /**
@@ -7,9 +7,7 @@ import { InvalidTokenException } from "../../../domain/auth/exceptions";
  */
 @Injectable()
 export class VerifyTokenUseCase {
-  constructor(
-    @Inject("IAuthService") private readonly authService: IAuthService
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   async execute(token: string): Promise<any> {
     try {

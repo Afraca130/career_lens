@@ -1,8 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
-import { IAuthService } from "../../domain/auth/auth.service.interface";
+import { IAuthService } from "./auth.service.interface";
 
+/**
+ * 인증 도메인 서비스
+ * 인증 관련 비즈니스 로직을 구현
+ */
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(private readonly jwtService: JwtService) {}

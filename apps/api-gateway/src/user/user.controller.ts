@@ -19,7 +19,7 @@ import {
   ApiQuery,
 } from "@nestjs/swagger";
 import { UserGrpcClient } from "./user-grpc.client";
-import { AuthGuard } from "./auth.guard";
+import { AuthGuard } from "../auth/auth.guard";
 import { ChangePasswordDto } from "./dto/change-password.dto";
 import { UpdateProfileDto } from "./dto/update-profile.dto";
 import { GetUsersDto } from "./dto/get-users.dto";

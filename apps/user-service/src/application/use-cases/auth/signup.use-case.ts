@@ -1,6 +1,6 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
-import { IAuthService } from "../../../domain/auth/auth.service.interface";
+import { AuthService } from "../../../domain/auth/auth.service";
 import { User } from "../../../domain/user/entity/user.domain";
 import { SignupRequest } from "./dto/signup.request";
 import { SignupResponse } from "./dto/signup.response";
@@ -15,8 +15,7 @@ export class SignupUseCase {
   constructor(
     @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
-    @Inject("IAuthService")
-    private readonly authService: IAuthService
+    private readonly authService: AuthService
   ) {}
 
   async execute(request: SignupRequest): Promise<SignupResponse> {

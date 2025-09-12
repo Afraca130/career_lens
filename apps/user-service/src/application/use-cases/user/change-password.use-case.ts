@@ -1,7 +1,7 @@
 import { Injectable, Inject } from "@nestjs/common";
 import { IUserRepository } from "../../../domain/user/user.repository.interface";
-import { IAuthService } from "../../../domain/auth/auth.service.interface";
-import { IUserService } from "../../../domain/user/user.service.interface";
+import { AuthService } from "../../../domain/auth/auth.service";
+import { UserService } from "../../../domain/user/user.service";
 import { User } from "../../../domain/user/entity/user.domain";
 import { ChangePasswordRequest } from "./dto/change-password.request";
 import { UserNotFoundException } from "../../../domain/user/exceptions";
@@ -13,14 +13,9 @@ import { UserNotFoundException } from "../../../domain/user/exceptions";
 export class ChangePasswordUseCase {
   constructor(
     @Inject("IUserRepository")
-    @Inject("IUserRepository")
     private readonly userRepository: IUserRepository,
-    @Inject("IAuthService")
-    @Inject("IAuthService")
-    private readonly authService: IAuthService,
-    @Inject("IUserService")
-    @Inject("IUserService")
-    private readonly userService: IUserService
+    private readonly authService: AuthService,
+    private readonly userService: UserService
   ) {}
 
   async execute(request: ChangePasswordRequest): Promise<User> {

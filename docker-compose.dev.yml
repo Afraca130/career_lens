@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: career-lens-postgres-dev
+    environment:
+      POSTGRES_DB: career_lens
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - career-lens-network
+
+  user-service:
+    build:
+      context: .
+      dockerfile: ./apps/user-service/Dockerfile
+    container_name: career-lens-user-service-dev
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_NAME: career_lens
+      JWT_SECRET: your-secret-key
+    ports:
+      - "3001:3001"
+      - "50051:50051"
+    depends_on:
+      - postgres
+    networks:
+      - career-lens-network
+    # 개발 모드: 코드 변경 시 자동 재시작
+    volumes:
+      - ./apps/user-service:/usr/src/app/apps/user-service
+      - ./libs:/usr/src/app/libs
+      - ./proto:/usr/src/app/proto
+    command: ["npm", "run", "start:user:dev"]
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./apps/api-gateway/Dockerfile
+    container_name: career-lens-api-gateway-dev
+    environment:
+      USER_SERVICE_GRPC_URL: user-service:50051
+      AUTH_SERVICE_GRPC_URL: user-service:50051
+      JWT_SECRET: your-secret-key
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+    networks:
+      - career-lens-network
+    # 개발 모드: 코드 변경 시 자동 재시작
+    volumes:
+      - ./apps/api-gateway:/usr/src/app/apps/api-gateway
+      - ./libs:/usr/src/app/libs
+      - ./proto:/usr/src/app/proto
+    command: ["npm", "run", "start:api-gateway:dev"]
+
+volumes:
+  postgres_data:
+
+networks:
+  career-lens-network:
+    driver: bridge

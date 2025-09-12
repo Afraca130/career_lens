@@ -1,13 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { IUserService } from "../../domain/user/user.service.interface";
-import { User } from "../../domain/user/entity/user.domain";
-import { 
-  PasswordChangeNotAllowedException, 
-  InvalidPasswordException 
-} from "../../domain/user/exceptions";
+import { User } from "./entity/user.domain";
+import {
+  PasswordChangeNotAllowedException,
+  InvalidPasswordException,
+} from "./exceptions";
 
-@Injectable()
-export class UserService implements IUserService {
+/**
+ * 사용자 도메인 서비스
+ * 사용자 관련 비즈니스 규칙을 구현
+ */
+export class UserService {
   canChangePassword(user: User): boolean {
     // kakao, naver로 가입한 사용자는 비밀번호 변경 불가
     return user.signType === "email";
@@ -23,8 +24,9 @@ export class UserService implements IUserService {
     }
 
     if (newPassword.length < 6) {
-      throw new InvalidPasswordException("비밀번호는 최소 6자 이상이어야 합니다.");
+      throw new InvalidPasswordException(
+        "비밀번호는 최소 6자 이상이어야 합니다."
+      );
     }
   }
 }
-

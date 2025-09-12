@@ -5,41 +5,16 @@ import { AuthMicroservice, UserMicroservice } from "@app/common";
 
 @Injectable()
 export class UserGrpcClient implements OnModuleInit {
-  private authService: AuthMicroservice.AuthServiceClient;
   private userService: UserMicroservice.UserServiceClient;
+  private authService: AuthMicroservice.AuthServiceClient;
 
   constructor(@Inject("USER_SERVICE") private readonly client: ClientGrpc) {}
 
   onModuleInit() {
-    this.authService =
-      this.client.getService<AuthMicroservice.AuthServiceClient>("AuthService");
     this.userService =
       this.client.getService<UserMicroservice.UserServiceClient>("UserService");
-  }
-
-  // Auth Service Methods
-  signup(
-    data: AuthMicroservice.SignupRequest
-  ): Observable<AuthMicroservice.SignupResponse> {
-    return this.authService.signup(data);
-  }
-
-  login(
-    data: AuthMicroservice.LoginRequest
-  ): Observable<AuthMicroservice.LoginResponse> {
-    return this.authService.login(data);
-  }
-
-  verifyToken(
-    data: AuthMicroservice.VerifyTokenRequest
-  ): Observable<AuthMicroservice.VerifyTokenResponse> {
-    return this.authService.verifyToken(data);
-  }
-
-  refreshToken(
-    data: AuthMicroservice.RefreshTokenRequest
-  ): Observable<AuthMicroservice.RefreshTokenResponse> {
-    return this.authService.refreshToken(data);
+    this.authService =
+      this.client.getService<AuthMicroservice.AuthServiceClient>("AuthService");
   }
 
   changePassword(
