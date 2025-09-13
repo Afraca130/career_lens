@@ -1,5 +1,15 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { AuthenticatedUser } from "../guards/jwt-auth.guard";
+
+/**
+ * 인증된 사용자 정보 인터페이스
+ */
+export interface AuthenticatedUser {
+  userId: string;
+  email: string;
+  type: string;
+  iat: number;
+  exp: number;
+}
 
 /**
  * JWT 토큰에서 사용자 정보를 추출하는 데코레이터

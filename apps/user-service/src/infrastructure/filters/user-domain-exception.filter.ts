@@ -1,21 +1,21 @@
 import { HttpStatus } from "@nestjs/common";
-import { DomainExceptionFilter } from "@app/common";
+import { UserDomainExceptionFilter as BaseUserDomainExceptionFilter } from "@app/common";
 
 import {
   UserNotFoundException,
   PasswordChangeNotAllowedException,
   InvalidPasswordException,
-} from "../../../domain/user/exceptions/user.exceptions";
+} from "../../domain/user/exceptions/user.exceptions";
 import {
   EmailAlreadyExistsException,
   InvalidCredentialsException,
   InvalidTokenException,
-} from "../../../domain/auth/exceptions/auth.exceptions";
+} from "../../domain/auth/exceptions/auth.exceptions";
 
 /**
  * 사용자 서비스 전용 도메인 예외 필터
  */
-export class UserDomainExceptionFilter extends DomainExceptionFilter {
+export class UserDomainExceptionFilter extends BaseUserDomainExceptionFilter {
   protected mapExceptionToHttpResponse(exception: any): {
     status: HttpStatus;
     message: string;

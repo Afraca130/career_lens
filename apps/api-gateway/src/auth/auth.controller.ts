@@ -6,8 +6,8 @@ import {
   ApiBody,
   ApiHeader,
 } from "@nestjs/swagger";
-import { SignupDto } from "../user/dto/signup.dto";
-import { LoginDto } from "../user/dto/login.dto";
+import { SignupDto } from "./dto/signup.dto";
+import { LoginDto } from "./dto/login.dto";
 import { AuthGrpcClient } from "./auth-grpc.client";
 
 @ApiTags("인증")
